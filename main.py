@@ -58,7 +58,7 @@ if args.alltests == 1:
         print(f"Group by {dataset}")
         if index > completed_index and index < end_index:
             args.data = dataset
-            args.nepoch = 50
+            args.nepoch = 100
             args.intergraph = 'sage'
             args.lr = 1e-3
             args.batchsize = 256
