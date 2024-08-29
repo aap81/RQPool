@@ -18,7 +18,7 @@ def coefficient_of_variation(values):
 
 from utils import get_repo_root
 
-with open(f"test.txt", 'r') as file:
+with open(f"logs/test.txt", 'r') as file:
     content = file.read()
 
 # Print the content
