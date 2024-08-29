@@ -18,7 +18,7 @@ parser.add_argument('--gamma', type=float, default=1.5, help='CB loss gamma')
 parser.add_argument('--decay', type=float, default=0, help='Weight decay')
 parser.add_argument('--seed', type=int, default=10, help='Random seed')
 parser.add_argument('--patience', type=int, default=50, help='Patience')
-parser.add_argument('--intergraph', default='none', help="mean or max or attention or none")
+parser.add_argument('--intergraph', default='sage', help="mean or max or attention or none")
 parser.add_argument('--alltests', type=int, default=0, help='Run all tests for the data and hyperparameter')
 parser.add_argument('--datagroup', type=int, default=1, help="select dataset group")
 args = parser.parse_args()
@@ -37,7 +37,7 @@ if args.alltests == 1:
             end_index = 9999
             datasets = group2
         case 3:
-            completed_index = -1
+            completed_index = 1
             end_index = 9999
             datasets = group3
         case 4:
@@ -59,7 +59,6 @@ if args.alltests == 1:
         if index > completed_index and index < end_index:
             args.data = dataset
             args.nepoch = 100
-            args.intergraph = 'set2set'
             args.lr = 1e-3
             args.batchsize = 256
             args.hdim = 128
