@@ -59,7 +59,7 @@ if args.alltests == 1:
         if index > completed_index and index < end_index:
             args.data = dataset
             args.nepoch = 100
-            args.intergraph = 'sage'
+            args.intergraph = 'set2set'
             args.lr = 1e-3
             args.batchsize = 256
             args.hdim = 128
