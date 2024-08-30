@@ -49,7 +49,7 @@ if args.alltests == 1:
             end_index = 9999
             datasets = group5
         case 6:
-            completed_index = 0
+            completed_index = -1
             end_index = 9999
             datasets = group6
     index = 0
