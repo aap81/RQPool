@@ -37,7 +37,7 @@ if args.alltests == 1:
             end_index = 9999
             datasets = group2
         case 3:
-            completed_index = 1
+            completed_index = -1
             end_index = 9999
             datasets = group3
         case 4:
@@ -45,11 +45,11 @@ if args.alltests == 1:
             end_index = 9999
             datasets = group4
         case 5:
-            completed_index = 1
+            completed_index = -1
             end_index = 9999
             datasets = group5
         case 6:
-            completed_index = -1
+            completed_index = 0
             end_index = 9999
             datasets = group6
     index = 0

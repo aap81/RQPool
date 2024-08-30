@@ -21,8 +21,12 @@ for k in list.keys():
 	list[k] = [x.strip() for x in list[k].split(",") if len(x) > 0]
 count = {}
 for k in list.keys():
-	val = list[k]
-
+	for v in list[k]:
+		if v not in count.keys():
+			count[v] = 0
+		else:
+			count[v] += 1
+{'mean': 6, 'sage': 7, 'set2set': 8, 'sort': 6}
 
 MCF-7 surpassed
 MOLT-4 - surpassed
