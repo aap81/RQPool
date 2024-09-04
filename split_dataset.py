@@ -8,11 +8,11 @@ import datautils
 from name import *
 from datautils import download_and_process_tu_dataset, get_repo_root, split_graph_dataset
 
-def split_all_datasets(train_ratio, test_ratio):
-    print(f"Splitting all listed datasets: {DATASETS}")
+def split_all_datasets(train_ratio, test_ratio, datasets):
+    print(f"Splitting all listed datasets: {datasets}")
     datasets_processed = 0
-    dataset_count = len(DATASETS) 
-    for dataset in DATASETS:
+    dataset_count = len(datasets) 
+    for dataset in datasets:
         start = time.time()
         print(f"\n{datasets_processed + 1}/{dataset_count} - Dataset: {dataset}")
         datasets_path = f"{get_repo_root()}/datasets"
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     print(json.dumps(args.__dict__, indent='\t'))
 
     start = time.time()
-    split_all_datasets(trainsz, testsz)
+    split_all_datasets(trainsz, testsz, DATASETS)
     end_time = time.time()
 
     print("\nGenerate successfully, time cost: {}".format(end_time - start))

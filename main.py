@@ -64,6 +64,10 @@ if args.alltests == 1:
             completed_index = -1
             end_index = 9999
             datasets = group9
+        case 10:
+            completed_index = -1
+            end_index = 9999
+            datasets = group10
     index = 0
     total_tests = len(datasets)
     for dataset in datasets:
