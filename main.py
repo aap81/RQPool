@@ -52,6 +52,10 @@ if args.alltests == 1:
             completed_index = -1
             end_index = 9999
             datasets = group6
+        case 6:
+            completed_index = -1
+            end_index = 9999
+            datasets = group6
     index = 0
     total_tests = len(datasets)
     for dataset in datasets:
@@ -61,7 +65,7 @@ if args.alltests == 1:
             args.nepoch = 100
             args.lr = 1e-3
             args.batchsize = 256
-            args.hdim = 128
+            args.hdim = 64
             args.width = 4
             args.depth = 6
             args.dropout = 0.4

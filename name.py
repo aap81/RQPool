@@ -21,4 +21,4 @@ group3 = ["MOLT-4",	"NCI1",	"OVCAR-8"]
 group4 = ["UACC257",	"NCI109"]
 group5 = ["SF-295",	"DD",	"P388"]
 group6 = ["NCI-H23",	"PC-3",	"MCF-7"]
-
+group7 = ["P388", "PC-3"]
