@@ -192,7 +192,13 @@ def load_dataset(dataset):
 
     for i, graph in enumerate(graphs):
         adj = to_scipy_sparse_matrix(graph.edge_index).tocoo()
-        feature_matrix = graph.x.numpy()
+        
+        # Check if the graph has node features
+        if graph.x is not None:
+            feature_matrix = graph.x.numpy()
+        else:
+            num_nodes = adj.shape[0]
+            feature_matrix = np.eye(num_nodes, 1)
 
         n_adj_nodes = adj.shape[0]
         n_feature_nodes = feature_matrix.shape[0]
