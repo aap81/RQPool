@@ -4,4 +4,5 @@ pip install matplotlib
 pip install scipy
 pip install scikit-learn
 pip install tensorflow
+pip install torch
 pip install torch-geometric
