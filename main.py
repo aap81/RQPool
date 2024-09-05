@@ -98,7 +98,7 @@ if args.alltests == 1:
         index += 1
 elif args.alltests == 2:
     datasets = DATASETS
-    completed_index = arg.completedindex
+    completed_index = args.completedindex
     end_index = args.endindex
     index = 1
     total_tests = len(datasets)
