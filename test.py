@@ -31,10 +31,7 @@ def execute(args):
     seed = args.seed
     patience = args.patience
     intergraph = args.intergraph
-    if args.outputfile == '':
-        output_file = 'output.txt'
-    else:
-        output_file = f"output-{args.outputfile}.txt"
+    output_file = args.outputfile
 
     try:
         nclass = 2

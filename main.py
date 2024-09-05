@@ -22,8 +22,16 @@ parser.add_argument('--intergraph', default='sage', help="mean or max or attenti
 parser.add_argument('--alltests', type=int, default=0, help='Run all tests for the data and hyperparameter')
 parser.add_argument('--datagroup', type=int, default=1, help="select dataset group")
 parser.add_argument('--outputfile', default='', help="set output file for logs")
+parser.add_argument('--completedindex', type=int, default=0, help="completed_index")
+parser.add_argument('--endindex', type=int, default=999999999, help="end_index")
+
 args = parser.parse_args()
 
+
+if args.outputfile == '':
+    args.outputfile = 'output.txt'
+else:
+    args.outputfile = f"output-{args.outputfile}.txt"
 
 #checking all hyper parameters with intergraph max and mean with integraph 0 (disabled)
 if args.alltests == 1:
@@ -83,10 +91,31 @@ if args.alltests == 1:
             args.depth = 6
             args.dropout = 0.4
             args.decay = 0  # Set decay value
-            log_print(f"Test number: {index}/{total_tests}")
+            log_print(f"Test number: {index}/{total_tests}", args.outputfile)
             test.execute(args)
         else:
-            log_print(f"Test number: {index}/{total_tests} skipped")
+            log_print(f"Test number: {index}/{total_tests} skipped", args.outputfile)
+        index += 1
+elif args.alltests == 2:
+    datasets = DATASETS
+    completed_index = arg.completedindex
+    end_index = args.endindex
+    index = 1
+    total_tests = len(datasets)
+    for dataset in datasets:
+        if index > completed_index and index < end_index:
+            args.data = dataset
+            args.lr = 1e-3
+            args.batchsize = 256
+            args.hdim = 64
+            args.width = 4
+            args.depth = 6
+            args.dropout = 0.4
+            args.decay = 0  # Set decay value
+            log_print(f"Group by {dataset}, Test number: {index}/{total_tests}", args.outputfile)
+            test.execute(args)
+        else:
+            log_print(f"Test number: {index}/{total_tests} skipped", args.outputfile)
         index += 1
 else:
     test.execute(args)

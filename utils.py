@@ -173,7 +173,7 @@ def load_dataset(dataset):
         features.append(feature_matrix)
     return graphs, adjs, features, graphlabels, train_index, val_index, test_index
 
-def log_print(text, file_name=""):
+def log_print(text, file_name="output.txt"):
     logging.basicConfig(filename=file_name, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     print(text)
     logging.info(text)
