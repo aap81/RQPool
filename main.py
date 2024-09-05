@@ -112,9 +112,10 @@ elif args.alltests == 2:
     end_index = args.endindex
     index = 1
     total_tests = len(datasets) * len(intergraphs)
-    for intergraph in intergraphs:
-        args.outputfile = f"output-{intergraph}.txt"
-        for dataset in datasets:
+    
+    for dataset in datasets:
+        for intergraph in intergraphs:
+            args.outputfile = f"output-{intergraph}.txt"
             if index > completed_index and index < end_index:
                 args.data = dataset
                 args.lr = 1e-3
