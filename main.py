@@ -21,6 +21,7 @@ parser.add_argument('--patience', type=int, default=50, help='Patience')
 parser.add_argument('--intergraph', default='sage', help="mean or max or attention or none")
 parser.add_argument('--alltests', type=int, default=0, help='Run all tests for the data and hyperparameter')
 parser.add_argument('--datagroup', type=int, default=1, help="select dataset group")
+parser.add_argument('--outputfile', default='', help="set output file for logs")
 args = parser.parse_args()
 
 

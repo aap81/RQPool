@@ -13,7 +13,7 @@ TEST = '_test.txt'
 
 NODELABEL = '_node_labels.txt'
 NODEATTR = '_node_attributes.txt'
-DATASETS = ["MOLT-4", "Mutagenicity", "SW-620", "NCI-H23", "PC-3", "MCF-7", "NCI109", "AIDS", "DD", "NCI1", "SF-295", "OVCAR-8", "P388", "PROTEINS", "SN12C", "UACC257"]
+DATASETS = ["MOLT-4", "Mutagenicity", "SW-620", "NCI-H23", "PC-3", "MCF-7", "NCI109", "AIDS", "DD", "NCI1", "SF-295", "OVCAR-8", "P388", "PROTEINS", "SN12C", "UACC257", 'COX2','IMDB-BINARY', 'REDDIT-BINARY', 'DHFR']
 
 group1 = ["SW-620",	"PROTEINS"]
 group2 = ["SN12C",	"AIDS"]
