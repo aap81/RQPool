@@ -118,6 +118,10 @@ class Graph2Vec(torch.nn.Module):
         self.pooling = pooling
 
     def forward(self, x, edge_index, batch):
+        if x is None:
+            # Create dummy features (all ones or identity) if x is None
+            num_nodes = edge_index.max().item() + 1
+            x = torch.ones((num_nodes, 1), device=edge_index.device)
         # Node-level GNN encoding
         x = self.conv1(x, edge_index)
         x = F.relu(x)
@@ -141,6 +145,10 @@ class Graph2VecSet2Set(torch.nn.Module):
         self.set2set = Set2Set(out_channels, processing_steps=3)
 
     def forward(self, x, edge_index, batch):
+        if x is None:
+            # Create dummy features (all ones or identity) if x is None
+            num_nodes = edge_index.max().item() + 1
+            x = torch.ones((num_nodes, 1), device=edge_index.device)
         # Node-level GNN encoding
         x = self.conv1(x, edge_index)
         x = F.relu(x)
@@ -158,6 +166,10 @@ class Graph2VecSortPooling(torch.nn.Module):
         self.sort_pool = SortAggregation(k)
 
     def forward(self, x, edge_index, batch):
+        if x is None:
+            # Create dummy features (all ones or identity) if x is None
+            num_nodes = edge_index.max().item() + 1
+            x = torch.ones((num_nodes, 1), device=edge_index.device)
         # Node-level GNN encoding
         x = self.conv1(x, edge_index)
         x = F.relu(x)
@@ -175,6 +187,10 @@ class Graph2VecGraphSAGE(torch.nn.Module):
         self.pooling = pooling
 
     def forward(self, x, edge_index, batch):
+        if x is None:
+            # Create dummy features (all ones or identity) if x is None
+            num_nodes = edge_index.max().item() + 1
+            x = torch.ones((num_nodes, 1), device=edge_index.device)
         # Node-level GNN encoding
         x = self.conv1(x, edge_index)
         x = F.relu(x)
