@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=2023, help='seed')
     parser.add_argument('--trainsz', type=float, default=0.7, help='train size')
     parser.add_argument('--testsz', type=float, default=0.15, help='test size')
+    parser.add_argument('--datagroup', type=int, default=0, help='datagroup')
     args = parser.parse_args()
 
     seed = args.seed
@@ -42,7 +43,13 @@ if __name__ == '__main__':
     print(json.dumps(args.__dict__, indent='\t'))
 
     start = time.time()
-    split_all_datasets(trainsz, testsz, DATASETS)
+    datasets = DATASETS
+    if args.datagroup == 0:
+        datasets = DATASETS
+    else:
+        group_name = f"group{args.datagroup}"
+        datasets = locals()[group_name]
+    split_all_datasets(trainsz, testsz, datasets)
     end_time = time.time()
 
     print("\nGenerate successfully, time cost: {}".format(end_time - start))
