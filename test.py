@@ -170,8 +170,6 @@ def execute(args):
 
         auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test = utils.compute_metrics(preds, truths)
         utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), output_file)
-
-        utils.log_print("Model from final output_file", output_file)
     except Exception as e:
         error_traceback = traceback.format_exc()
         utils.log_print(f"An error occurred: {error_traceback}", output_file)

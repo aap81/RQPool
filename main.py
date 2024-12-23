@@ -22,7 +22,7 @@ parser.add_argument('--intergraph', default='sage', help="mean or max or attenti
 parser.add_argument('--alltests', type=int, default=0, help='Run all tests for the data and hyperparameter')
 parser.add_argument('--datagroup', type=int, default=0, help="select dataset group")
 parser.add_argument('--outputfile', default='', help="set output file for logs")
-parser.add_argument('--completedindex', type=int, default=0, help="completed_index")
+parser.add_argument('--completedindex', type=int, default=-1, help="completed_index")
 parser.add_argument('--endindex', type=int, default=999999999, help="end_index")
 
 args = parser.parse_args()
@@ -60,8 +60,7 @@ if args.alltests == 1:
     total_tests = len(datasets)
     args.outputfile = f"output.txt"    
     for dataset in datasets:
-        in_started = dataset in completed.keys()
-        if (index > completed_index and index < end_index) and not (in_started and args.intergraph in completed[dataset]):
+        if (index > completed_index and index < end_index):
             args.data = dataset
             args.lr = 1e-3
             args.batchsize = 256
