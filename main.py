@@ -32,91 +32,28 @@ if args.outputfile == '':
 else:
     args.outputfile = f"output-{args.outputfile}.txt"
 
-if args.outputfile == '':
-    args.outputfile = 'output.txt'
+if args.outputfile == ''
+:    args.outputfile = 'output.txt'
 else:
     args.outputfile = f"output-{args.outputfile}.txt"
 
 #checking all hyper parameters with intergraph max and mean with integraph 0 (disabled)
 if args.alltests == 1:
-    datasets = []
-    match args.datagroup:
-        case 1:
-            completed_index = -1
-            end_index = 9999
-            datasets = group1
-        case 2:
-            completed_index = -1
-            end_index = 9999
-            datasets = group2
-        case 3:
-            completed_index = -1
-            end_index = 9999
-            datasets = group3
-        case 4:
-            completed_index = -1
-            end_index = 9999
-            datasets = group4
-        case 5:
-            completed_index = -1
-            end_index = 9999
-            datasets = group5
-        case 6:
-            completed_index = -1
-            end_index = 9999
-            datasets = group6
-        case 7:
-            completed_index = -1
-            end_index = 9999
-            datasets = group7
-        case 8:
-            completed_index = -1
-            end_index = 9999
-            datasets = group8
-        case 9:
-            completed_index = -1
-            end_index = 9999
-            datasets = group9
-        case 10:
-            completed_index = -1
-            end_index = 9999
-            datasets = group10
-    index = 0
-    total_tests = len(datasets)
-    for dataset in datasets:
-        print(f"Group by {dataset}")
-        if index > completed_index and index < end_index:
-            args.data = dataset
-            args.nepoch = 100
-            args.lr = 1e-3
-            args.batchsize = 256
-            args.hdim = 64
-            args.width = 4
-            args.depth = 6
-            args.dropout = 0.4
-            args.decay = 0  # Set decay value
-            log_print(f"Test number: {index}/{total_tests}", args.outputfile)
-            test.execute(args)
-        else:
-            log_print(f"Test number: {index}/{total_tests} skipped", args.outputfile)
-        index += 1
-elif args.alltests == 2:
     datasets = DATASETS
-    intergraphs = []
-    if args.datagroup == 1:
-        intergraphs = ["none", "sage", "mean"]
-    else:
-        intergraphs = ["sort", "set2set", "max"]
+    intergraphs = ["none", "sage", "mean", "sort", "set2set", "max"]
+    completed = {
+        "MOLT-4": ["none"]
+    }
 
     completed_index = args.completedindex
     end_index = args.endindex
-    index = 1
+    index = 0
     total_tests = len(datasets) * len(intergraphs)
-    
-    for dataset in datasets:
-        for intergraph in intergraphs:
-            args.outputfile = f"output-{intergraph}.txt"
-            if index > completed_index and index < end_index:
+    args.outputfile = f"output.txt"    
+    for intergraph in intergraphs:
+        for dataset in datasets:
+            in_started = dataset in completed.keys()
+            if (index > completed_index and index < end_index) and not (in_started and intergraph in completed[dataset]):
                 args.data = dataset
                 args.lr = 1e-3
                 args.batchsize = 256
@@ -126,10 +63,10 @@ elif args.alltests == 2:
                 args.intergraph = intergraph
                 args.dropout = 0.4
                 args.decay = 0  # Set decay value
-                log_print(f"Group by {dataset}, Test number: {index}/{total_tests}", args.outputfile)
+                log_print(f"Group by {dataset}, Test number: {index}/{total_tests}, Intergraph: {intergraph}", args.outputfile)
                 test.execute(args)
             else:
-                log_print(f"Test number: {index}/{total_tests} skipped", args.outputfile)
+                log_print(f"Group by {dataset}, Test number: {index}/{total_tests} skipped, Intergraph: {intergraph}", args.outputfile)
             index += 1
 else:
     test.execute(args)

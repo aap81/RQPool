@@ -81,7 +81,6 @@ def execute(args):
         bestepochf1 = 0
         bestmodelauc = deepcopy(gad)
         bestmodelf1 = deepcopy(gad)
-        lastmodel = deepcopy(gad)
 
         patiencecount = 0
 
@@ -136,10 +135,7 @@ def execute(args):
                 patiencecount += 1
 
             if patiencecount > patience:
-                lastmodel = deepcopy(gad)
                 break
-            elif epoch == 99:
-                lastmodel = deepcopy(gad)
 
         utils.log_print("\nUnder the condition of auc, best idx: {}".format(bestepochauc), output_file)
         test_batches = utils.generate_batches(adj_test, feats_test, label_test, batchsize, False, graphs_test)
@@ -176,21 +172,6 @@ def execute(args):
         utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), output_file)
 
         utils.log_print("Model from final output_file", output_file)
-        test_batches = utils.generate_batches(adj_test, feats_test, label_test, batchsize, False, graphs_test)
-        preds = torch.Tensor()
-        truths = torch.Tensor()
-        for i, test_batch in enumerate(test_batches):
-            outputs = lastmodel(test_batch)
-            outputs = nn.functional.softmax(outputs, dim=1)
-            if i == 0:
-                preds = outputs
-                truths = test_batch.label_list
-            else:
-                preds = torch.cat((preds, outputs), dim=0)
-                truths = torch.cat((truths, test_batch.label_list), dim=0)
-
-        auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test = utils.compute_metrics(preds, truths)
-        utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), output_file)
     except Exception as e:
         error_traceback = traceback.format_exc()
         utils.log_print(f"An error occurred: {error_traceback}", output_file)

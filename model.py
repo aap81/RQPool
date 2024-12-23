@@ -2,7 +2,7 @@ import torch.nn as nn
 from torch.nn import init
 import torch.nn.functional as F
 import torch
-from torch_geometric.nn import ChebConv, GCNConv, global_mean_pool, global_max_pool, GATConv, Set2Set, SAGEConv
+from torch_geometric.nn import ChebConv, GCNConv, global_mean_pool, global_max_pool, GATConv, Set2Set, SAGEConv, SAGPooling, TopKPooling, ASAPooling
 from torch_geometric.nn.aggr import SortAggregation
 from torch_geometric.data import Batch
 import pdb
@@ -206,6 +206,96 @@ class Graph2VecGraphSAGE(torch.nn.Module):
 
         return graph_embedding
 
+class GraphModelSageMeanMax(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels):
+        super().__init__()
+        self.conv1 = SAGEConv(in_channels, hidden_channels)
+        self.conv2 = SAGEConv(hidden_channels, hidden_channels)
+        self.lin = torch.nn.Linear(2 * hidden_channels, out_channels)  # 2x for concat
+
+    def forward(self, x, edge_index, batch):
+        x = F.relu(self.conv1(x, edge_index))
+        x = F.relu(self.conv2(x, edge_index))
+
+        # Mean and Max pooling, then concatenate
+        x_mean = global_mean_pool(x, batch)
+        x_max = global_max_pool(x, batch)
+        x_concat = torch.cat([x_mean, x_max], dim=-1)
+
+        return self.lin(x_concat)
+
+class GraphModelAttention(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels):
+        super().__init__()
+        self.conv = SAGEConv(in_channels, hidden_channels)
+        self.att_weight = torch.nn.Linear(hidden_channels, 1)  # scalar attention
+
+        self.lin = torch.nn.Linear(hidden_channels, out_channels)
+
+    def forward(self, x, edge_index, batch):
+        x = F.relu(self.conv(x, edge_index))
+
+        # Compute node importance scores
+        scores = torch.sigmoid(self.att_weight(x))  # shape [num_nodes, 1]
+        x = x * scores  # apply attention gating element-wise
+
+        # Then do global pooling
+        x = global_mean_pool(x, batch)
+        return self.lin(x)
+
+class SAGPoolModel(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, ratio=0.5):
+        super().__init__()
+        # First GNN + Pool
+        self.conv1 = SAGEConv(in_channels, hidden_channels)
+        self.pool1 = SAGPooling(hidden_channels, ratio=ratio)
+
+        # Second GNN + Pool (optional second hierarchy)
+        self.conv2 = SAGEConv(hidden_channels, hidden_channels)
+        self.pool2 = SAGPooling(hidden_channels, ratio=ratio)
+
+        # Final classification
+        self.lin = torch.nn.Linear(hidden_channels, out_channels)
+
+    def forward(self, x, edge_index, batch):
+        # 1) First GraphSAGE layer
+        x = F.relu(self.conv1(x, edge_index))
+
+        # 2) First SAGPool
+        x, edge_index, _, batch, _, _ = self.pool1(x, edge_index, batch=batch)
+        
+        # 3) Second GraphSAGE layer
+        x = F.relu(self.conv2(x, edge_index))
+
+        # 4) Second SAGPool
+        x, edge_index, _, batch, _, _ = self.pool2(x, edge_index, batch=batch)
+
+        # 5) Global pool after final hierarchy
+        x = global_mean_pool(x, batch)
+
+        return self.lin(x)
+
+class TopKPoolModel(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, ratio=0.5):
+        super().__init__()
+        self.conv1 = SAGEConv(in_channels, hidden_channels)
+        self.pool1 = TopKPooling(hidden_channels, ratio=ratio)
+
+        self.conv2 = SAGEConv(hidden_channels, hidden_channels)
+        self.pool2 = TopKPooling(hidden_channels, ratio=ratio)
+
+        self.lin = torch.nn.Linear(hidden_channels, out_channels)
+
+    def forward(self, x, edge_index, batch):
+        x = F.relu(self.conv1(x, edge_index))
+        x, edge_index, _, batch, _, _ = self.pool1(x, edge_index, batch=batch)
+
+        x = F.relu(self.conv2(x, edge_index))
+        x, edge_index, _, batch, _, _ = self.pool2(x, edge_index, batch=batch)
+
+        x = global_mean_pool(x, batch)
+        return self.lin(x)
+
 class EnhancedRQGNN(nn.Module):
     def __init__(self, feature_dim, hidden_dim, n_class, gnn_width, gnn_depth, dropout, normalize, embedding_dim=128, inter_graph_pooling="mean"):
         super(EnhancedRQGNN, self).__init__()
@@ -219,6 +309,18 @@ class EnhancedRQGNN(nn.Module):
             self.projection = nn.Linear(k * embedding_dim, n_class)
         elif inter_graph_pooling == "sage":
             self.inter_analyzer = Graph2VecGraphSAGE(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim)
+            self.projection = nn.Linear(embedding_dim, n_class)
+        elif inter_graph_pooling == "sageMeanMax":
+            self.inter_analyzer = GraphModelSageMeanMax(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim)
+            self.projection = nn.Linear(embedding_dim, n_class)
+        elif inter_graph_pooling == "attention":
+            self.inter_analyzer = GraphModelAttention(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim)
+            self.projection = nn.Linear(embedding_dim, n_class)
+        elif inter_graph_pooling == "sagPool":
+            self.inter_analyzer = SAGPoolModel(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim)
+            self.projection = nn.Linear(embedding_dim, n_class)
+        elif inter_graph_pooling == "topk":
+            self.inter_analyzer = TopKPoolModel(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim)
             self.projection = nn.Linear(embedding_dim, n_class)
         else:
             self.inter_analyzer = Graph2Vec(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim, pooling=inter_graph_pooling)
