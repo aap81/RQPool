@@ -32,15 +32,24 @@ if args.outputfile == '':
 else:
     args.outputfile = f"output-{args.outputfile}.txt"
 
-if args.outputfile == ''
-:    args.outputfile = 'output.txt'
+if args.outputfile == '':    
+    args.outputfile = 'output.txt'
 else:
     args.outputfile = f"output-{args.outputfile}.txt"
 
 #checking all hyper parameters with intergraph max and mean with integraph 0 (disabled)
 if args.alltests == 1:
     datasets = DATASETS
-    intergraphs = ["none", "sage", "mean", "sort", "set2set", "max"]
+    match args.datagroup:
+        case 1:
+            datasets = group1
+        case 2:
+            datasets = group2
+        case 3:
+            datasets = group3
+        case 4:
+            datasets = group4
+
     completed = {
         "MOLT-4": ["none"]
     }
@@ -48,25 +57,23 @@ if args.alltests == 1:
     completed_index = args.completedindex
     end_index = args.endindex
     index = 0
-    total_tests = len(datasets) * len(intergraphs)
+    total_tests = len(datasets)
     args.outputfile = f"output.txt"    
-    for intergraph in intergraphs:
-        for dataset in datasets:
-            in_started = dataset in completed.keys()
-            if (index > completed_index and index < end_index) and not (in_started and intergraph in completed[dataset]):
-                args.data = dataset
-                args.lr = 1e-3
-                args.batchsize = 256
-                args.hdim = 64
-                args.width = 4
-                args.depth = 6
-                args.intergraph = intergraph
-                args.dropout = 0.4
-                args.decay = 0  # Set decay value
-                log_print(f"Group by {dataset}, Test number: {index}/{total_tests}, Intergraph: {intergraph}", args.outputfile)
-                test.execute(args)
-            else:
-                log_print(f"Group by {dataset}, Test number: {index}/{total_tests} skipped, Intergraph: {intergraph}", args.outputfile)
-            index += 1
+    for dataset in datasets:
+        in_started = dataset in completed.keys()
+        if (index > completed_index and index < end_index) and not (in_started and args.intergraph in completed[dataset]):
+            args.data = dataset
+            args.lr = 1e-3
+            args.batchsize = 256
+            args.hdim = 64
+            args.width = 4
+            args.depth = 6
+            args.dropout = 0.4
+            args.decay = 0  # Set decay value
+            log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests}, Intergraph: {args.intergraph}", args.outputfile)
+            test.execute(args)
+        else:
+            log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests} skipped, Intergraph: {args.intergraph}", args.outputfile)
+        index += 1
 else:
     test.execute(args)
