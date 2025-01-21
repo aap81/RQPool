@@ -7,7 +7,7 @@ from torch_geometric.nn.aggr import SortAggregation
 from torch_geometric.data import Batch
 import pdb
 
-
+# base
 class RQGNN(nn.Module):
     def __init__(self, featuredim, hdim, nclass, width, depth, dropout, normalize):
         super(RQGNN, self).__init__()
