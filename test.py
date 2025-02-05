@@ -31,7 +31,8 @@ def execute(args):
     seed = args.seed
     patience = args.patience
     intergraph = args.intergraph
-    output_file = args.outputfile
+    output_file = args.logfile
+    metrics_file = args.metricsfile
 
     try:
         nclass = 2
@@ -67,6 +68,14 @@ def execute(args):
         ny_0 = label_train.count(0)
         ny_1 = label_train.count(1)
 
+        # metrics acc variables
+        times = []
+        
+        testing = {
+            'by_auc': {'idx': -1, 'auc': -1, 'f1': -1, 'accuracy': -1, 'precision': -1, 'recall': -1},
+            'by_f1': {'idx': -1, 'auc': -1, 'f1': -1, 'accuracy': -1, 'precision': -1, 'recall': -1}
+        }
+
 
         gad = None
         if intergraph == 'none':
@@ -101,7 +110,9 @@ def execute(args):
                 epoch_loss += loss.item()
 
             epoch_end = time.time()
-            utils.log_print('Epoch: {}, loss: {}, time cost: {}'.format(epoch, epoch_loss / len(train_batches), epoch_end - epoch_start), output_file)
+            epoch_time = epoch_end - epoch_start
+            times.append(epoch_time)
+            utils.log_print('Epoch: {}, loss: {}, time cost: {}'.format(epoch, epoch_loss / len(train_batches), epoch_time), output_file)
 
             gad.eval()
             val_batches = utils.generate_batches(adj_val, feats_val, label_val, batchsize, False, graphs_val)
@@ -119,7 +130,6 @@ def execute(args):
 
             auc_val, f1_score_val, accuracy_val, macro_precision_val, macro_recall_val = utils.compute_metrics(preds, truths)
             utils.log_print("Val auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}".format(auc_val, f1_score_val, accuracy_val, macro_precision_val, macro_recall_val), output_file)
-
 
             if bestauc <= auc_val:
                 bestauc = auc_val
@@ -153,6 +163,7 @@ def execute(args):
 
         auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test = utils.compute_metrics(preds, truths)
         utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), output_file)
+        testing['by_auc'] = {'idx': bestepochauc, 'auc': auc_test, 'f1': f1_score_test, 'accuracy': accuracy_test, 'precision': macro_precision_test, 'recall': macro_recall_test}
 
         utils.log_print("Under the condition of f1, best idx: {}".format(bestepochf1), output_file)
         test_batches = utils.generate_batches(adj_test, feats_test, label_test, batchsize, False, graphs_test)
@@ -170,6 +181,8 @@ def execute(args):
 
         auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test = utils.compute_metrics(preds, truths)
         utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), output_file)
+        testing['by_f1'] = {'idx': bestepochf1, 'auc': auc_test, 'f1': f1_score_test, 'accuracy': accuracy_test, 'precision': macro_precision_test, 'recall': macro_recall_test}
+        utils.metrics_print(f"Dataset: {data}, Intergraph: {intergraph}, avg_training_time: {sum(times)/len(times)}, testing_vals: {testing} \n", metrics_file)
     except Exception as e:
         error_traceback = traceback.format_exc()
         utils.log_print(f"An error occurred: {error_traceback}", output_file)

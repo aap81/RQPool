@@ -174,6 +174,26 @@ def load_dataset(dataset):
     return graphs, adjs, features, graphlabels, train_index, val_index, test_index
 
 def log_print(text, file_name="output.txt"):
-    logging.basicConfig(filename=file_name, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger("log_print")
+    logger.setLevel(logging.INFO)
+
+    # Prevent duplicate logs
+    if not logger.handlers:
+        handler = logging.FileHandler(file_name)
+        handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        logger.addHandler(handler)
+
     print(text)
-    logging.info(text)
+    logger.info(text)
+
+def metrics_print(text, file_name="metrics-log.txt"):
+    logger = logging.getLogger("metrics_print")
+    logger.setLevel(logging.INFO)
+
+    # Prevent duplicate logs
+    if not logger.handlers:
+        handler = logging.FileHandler(file_name)
+        logger.addHandler(handler)
+
+    print(text)
+    logger.info(text)
