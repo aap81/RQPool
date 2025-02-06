@@ -18,3 +18,5 @@ DATASETS = ["AIDS", "DD", "PROTEINS", 'COX2',
 			"NCI109",  "NCI1", "SF-295", "OVCAR-8", "P388",  
 			"SN12C", "UACC257", 'IMDB-BINARY', 'REDDIT-BINARY', 'DHFR']
 INTERGRAPHS = ["sort", "set2set", "sage", "topk", "sageMeanMax", "attention", "sagPool", 'mean', 'none']
+
+TESTING_SETS = ['PROTEINS', "DD", "P388"]

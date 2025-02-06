@@ -10,6 +10,7 @@ python main.py --data PROTEINS --nepoch 10 --intergraph  mean
 python main.py --alltests 1 --nepoch 100 --intergraph sagPool --datagroup 1 
 python main.py --alltests 1 --nepoch 100 --intergraph sagPool --datagroup 1 --endindex 1
 python main.py --alltests 1 --nepoch 100 --intergraph attention --datagroup 4
+python main.py --alltests 2 --nepoch 1 --datagroup 1 
 
 
 [Experiment 1 - Dataset: MOLT-4]

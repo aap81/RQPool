@@ -43,12 +43,7 @@ if __name__ == '__main__':
     print(json.dumps(args.__dict__, indent='\t'))
 
     start = time.time()
-    datasets = DATASETS
-    if args.datagroup == 0:
-        datasets = DATASETS
-    else:
-        group_name = f"group{args.datagroup}"
-        datasets = locals()[group_name]
+    datasets = TESTING_SETS
     split_all_datasets(trainsz, testsz, datasets)
     end_time = time.time()
 
