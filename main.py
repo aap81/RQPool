@@ -26,6 +26,7 @@ parser.add_argument('--logfile', default='output.txt', help="set output file for
 parser.add_argument('--metricsfile', default='metrics-log.txt', help="set output file for metrics results")
 parser.add_argument('--completedindex', type=int, default=-1, help="completed_index")
 parser.add_argument('--endindex', type=int, default=999999999, help="end_index")
+parser.add_argument('--enableprint', type=int, default=0, help="enables print statements")
 
 args = parser.parse_args()
 
@@ -63,7 +64,7 @@ elif args.alltests == 2:
     datasets = TESTING_SETS
     match args.datagroup:
         case 1:
-            datasets = ["COX2", "DHFR", "NC1", "NCI109"]
+            datasets = ["COX2", "NCI1", "MOLT-4"]
         case 2:
             datasets = ["PC-3"]
         case 3:

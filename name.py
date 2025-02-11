@@ -19,4 +19,4 @@ DATASETS = ["AIDS", "DD", "PROTEINS", 'COX2',
 			"SN12C", "UACC257", 'DHFR']
 INTERGRAPHS = ["sort", "set2set", "sage", "topk", "sageMeanMax", "attention", "sagPool", 'mean', 'none']
 
-TESTING_SETS = ["COX2", "DHFR", "NCI1", "NCI109", "PC-3", "MCF-7"]
+TESTING_SETS = ["COX2", "NCI1", "PC-3", "MCF-7", "MOLT-4"]

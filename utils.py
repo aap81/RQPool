@@ -98,7 +98,7 @@ def compute_metrics(preds, truths):
     auc = roc_auc_score(truths.detach().cpu().numpy(), preds.detach().cpu().numpy()[:, 1])
 
     target_names = ['C0', 'C1']
-    DICT = classification_report(truths.detach().cpu().numpy(), preds.detach().cpu().numpy().argmax(axis=1), target_names=target_names, output_dict=True)
+    DICT = classification_report(truths.detach().cpu().numpy(), preds.detach().cpu().numpy().argmax(axis=1), target_names=target_names, output_dict=True, zero_division = 0)
 
     macro_f1 = DICT['macro avg']['f1-score']
 
@@ -119,7 +119,7 @@ def get_repo_root():
     return current_dir
 
 def load_dataset(dataset):
-    print(f"Loading dataset: {dataset}")
+    # print(f"Loading dataset: {dataset}")
 
     path = os.path.join(DATADIR, dataset, "raw")
     graphlabel_path = os.path.join(path, dataset + NEWLABEL)
@@ -173,7 +173,7 @@ def load_dataset(dataset):
         features.append(feature_matrix)
     return graphs, adjs, features, graphlabels, train_index, val_index, test_index
 
-def log_print(text, file_name="output.txt"):
+def log_print(text, enable_print, file_name="output.txt"):
     logger = logging.getLogger("log_print")
     logger.setLevel(logging.INFO)
 
@@ -183,7 +183,8 @@ def log_print(text, file_name="output.txt"):
         handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
         logger.addHandler(handler)
 
-    print(text)
+    if enable_print:
+        print(text)
     logger.info(text)
 
 def metrics_print(text, file_name="metrics-log.txt"):

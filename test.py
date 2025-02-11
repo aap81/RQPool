@@ -33,14 +33,15 @@ def execute(args):
     intergraph = args.intergraph
     output_file = args.logfile
     metrics_file = args.metricsfile
+    enable_print = args.enableprint
 
     try:
         nclass = 2
 
         utils.set_seed(seed)
 
-        utils.log_print("\n[NEW TEST]  - Model info:", output_file)
-        utils.log_print(json.dumps(args.__dict__, indent='\t'), output_file)
+        utils.log_print("\n[NEW TEST]  - Model info:", enable_print, output_file)
+        utils.log_print(json.dumps(args.__dict__, indent='\t'), enable_print, output_file)
 
         graphs, adjs, features, graphlabels, train_index, val_index, test_index = utils.load_dataset(data)
         # adjs, features, graphlabels, train_index, val_index, test_index = utils.load_data(data)
@@ -94,7 +95,7 @@ def execute(args):
         patiencecount = 0
 
 
-        utils.log_print("Starts training...", output_file)
+        utils.log_print("Starts training...", enable_print,  output_file)
         for epoch in range(nepoch):
             epoch_start = time.time()
             gad.train() # set to train mode
@@ -112,7 +113,7 @@ def execute(args):
             epoch_end = time.time()
             epoch_time = epoch_end - epoch_start
             times.append(epoch_time)
-            utils.log_print('Epoch: {}, loss: {}, time cost: {}'.format(epoch, epoch_loss / len(train_batches), epoch_time), output_file)
+            utils.log_print('Epoch: {}, loss: {}, time cost: {}'.format(epoch, epoch_loss / len(train_batches), epoch_time), enable_print, output_file)
 
             gad.eval()
             val_batches = utils.generate_batches(adj_val, feats_val, label_val, batchsize, False, graphs_val)
@@ -129,7 +130,7 @@ def execute(args):
                     truths = torch.cat((truths, val_batch.label_list), dim=0)
 
             auc_val, f1_score_val, accuracy_val, macro_precision_val, macro_recall_val = utils.compute_metrics(preds, truths)
-            utils.log_print("Val auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}".format(auc_val, f1_score_val, accuracy_val, macro_precision_val, macro_recall_val), output_file)
+            utils.log_print("Val auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}".format(auc_val, f1_score_val, accuracy_val, macro_precision_val, macro_recall_val), enable_print, output_file)
 
             if bestauc <= auc_val:
                 bestauc = auc_val
@@ -147,7 +148,7 @@ def execute(args):
             if patiencecount > patience:
                 break
 
-        utils.log_print("\nUnder the condition of auc, best idx: {}".format(bestepochauc), output_file)
+        utils.log_print("\nUnder the condition of auc, best idx: {}".format(bestepochauc), enable_print, output_file)
         test_batches = utils.generate_batches(adj_test, feats_test, label_test, batchsize, False, graphs_test)
         preds = torch.Tensor()
         truths = torch.Tensor()
@@ -162,10 +163,10 @@ def execute(args):
                 truths = torch.cat((truths, test_batch.label_list), dim=0)
 
         auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test = utils.compute_metrics(preds, truths)
-        utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), output_file)
+        utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), enable_print, output_file)
         testing['by_auc'] = {'idx': bestepochauc, 'auc': auc_test, 'f1': f1_score_test, 'accuracy': accuracy_test, 'precision': macro_precision_test, 'recall': macro_recall_test}
 
-        utils.log_print("Under the condition of f1, best idx: {}".format(bestepochf1), output_file)
+        utils.log_print("Under the condition of f1, best idx: {}".format(bestepochf1), enable_print, output_file)
         test_batches = utils.generate_batches(adj_test, feats_test, label_test, batchsize, False, graphs_test)
         preds = torch.Tensor()
         truths = torch.Tensor()
@@ -180,9 +181,9 @@ def execute(args):
                 truths = torch.cat((truths, test_batch.label_list), dim=0)
 
         auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test = utils.compute_metrics(preds, truths)
-        utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), output_file)
+        utils.log_print("Test auc: {}, f1: {}, accuracy: {}, precision: {}, recall: {}\n".format(auc_test, f1_score_test, accuracy_test, macro_precision_test, macro_recall_test), enable_print, output_file)
         testing['by_f1'] = {'idx': bestepochf1, 'auc': auc_test, 'f1': f1_score_test, 'accuracy': accuracy_test, 'precision': macro_precision_test, 'recall': macro_recall_test}
         utils.metrics_print(f"Dataset: {data}, Intergraph: {intergraph}, avg_training_time: {sum(times)/len(times)}, testing_vals: {testing} \n", metrics_file)
     except Exception as e:
         error_traceback = traceback.format_exc()
-        utils.log_print(f"An error occurred: {error_traceback}", output_file)
+        utils.log_print(f"An error occurred: {error_traceback}", enable_print, output_file)
