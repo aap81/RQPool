@@ -60,32 +60,32 @@ if args.alltests == 1:
             log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests} skipped, Intergraph: {args.intergraph}", args.logfile)
         index += 1
 elif args.alltests == 2:
-    datasets = ['PROTEINS', "DD", "P388"]
+    datasets = TESTING_SETS
     match args.datagroup:
         case 1:
-            datasets = ['PROTEINS']
+            datasets = ["COX2", "DHFR", "NC1", "NCI109"]
         case 2:
-            datasets = ['P388']
+            datasets = ["PC-3"]
         case 3:
-            datasets = ['DD']
+            datasets = ["MCF-7"]
     index = 0
-    dataset = datasets[0]
-    total_tests = len(INTERGRAPHS)
-    for intergraph in INTERGRAPHS:
-        if (index > args.completedindex and index < args.endindex):
-            args.data = dataset
-            args.intergraph = intergraph
-            args.lr = 1e-3
-            args.batchsize = 256
-            args.hdim = 64
-            args.width = 4
-            args.depth = 6
-            args.dropout = 0.4
-            args.decay = 0  # Set decay value
-            log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests}, Intergraph: {args.intergraph}", args.logfile)
-            test.execute(args)
-        else:
-            log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests} skipped, Intergraph: {args.intergraph}", args.logfile)
-        index += 1
+    total_tests = len(INTERGRAPHS) * len(datasets)
+    for dataset in datasets:
+        for intergraph in INTERGRAPHS:
+            if (index > args.completedindex and index < args.endindex):
+                args.data = dataset
+                args.intergraph = intergraph
+                args.lr = 1e-3
+                args.batchsize = 256
+                args.hdim = 64
+                args.width = 4
+                args.depth = 6
+                args.dropout = 0.4
+                args.decay = 0  # Set decay value
+                log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests}, Intergraph: {args.intergraph}", args.logfile)
+                test.execute(args)
+            else:
+                log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests} skipped, Intergraph: {args.intergraph}", args.logfile)
+            index += 1
 else:
     test.execute(args)
