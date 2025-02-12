@@ -31,44 +31,8 @@ parser.add_argument('--enableprint', type=int, default=0, help="enables print st
 args = parser.parse_args()
 
 #checking all hyper parameters with intergraph max and mean with integraph 0 (disabled)
-if args.alltests == 1:
-    datasets = DATASETS
-    match args.datagroup:
-        case 1:
-            datasets = group1
-        case 2:
-            datasets = group2
-        case 3:
-            datasets = group3
-        case 4:
-            datasets = group4
-
-    index = 0
-    total_tests = len(datasets)
-    for dataset in datasets:
-        if (index > args.completedindex and index < args.endindex):
-            args.data = dataset
-            args.lr = 1e-3
-            args.batchsize = 256
-            args.hdim = 64
-            args.width = 4
-            args.depth = 6
-            args.dropout = 0.4
-            args.decay = 0  # Set decay value
-            log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests}, Intergraph: {args.intergraph}", args.logfile)
-            test.execute(args)
-        else:
-            log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests} skipped, Intergraph: {args.intergraph}", args.logfile)
-        index += 1
-elif args.alltests == 2:
-    datasets = TESTING_SETS
-    match args.datagroup:
-        case 1:
-            datasets = ["COX2", "NCI1", "MOLT-4"]
-        case 2:
-            datasets = ["PC-3"]
-        case 3:
-            datasets = ["MCF-7"]
+if args.alltests == 2:
+    datasets = [TESTING_SETS[args.datagroup]]
     index = 0
     total_tests = len(INTERGRAPHS) * len(datasets)
     for dataset in datasets:
