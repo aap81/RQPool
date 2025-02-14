@@ -47,10 +47,10 @@ if args.alltests == 2:
                 args.depth = 6
                 args.dropout = 0.4
                 args.decay = 0  # Set decay value
-                log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests}, Intergraph: {args.intergraph}", args.logfile)
+                log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests}, Intergraph: {intergraph}", args.logfile)
                 test.execute(args)
             else:
-                log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests} skipped, Intergraph: {args.intergraph}", args.logfile)
+                log_print(f"Group by {dataset}, Test number: {index + 1}/{total_tests} skipped, Intergraph: {intergraph}", args.logfile)
             index += 1
 else:
     test.execute(args)

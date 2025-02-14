@@ -5,7 +5,7 @@ conda activate gmapadconda
 #PC-3
 python main.py --alltests 1 --datagroup 7 --intergraph none
 python main.py --data Mutagenicity --nepoch 10 --intergraph  sort --dropout 0.5
-python main.py --data PROTEINS --nepoch 10 --intergraph  mean
+python main.py --data MOLT-4 --intergraph sage
 
 python main.py --alltests 1 --nepoch 100 --intergraph sagPool --datagroup 1 
 python main.py --alltests 1 --nepoch 100 --intergraph sagPool --datagroup 1 --endindex 1

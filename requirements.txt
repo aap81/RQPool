@@ -1,8 +1,19 @@
-pip install numpy
-pip install pandas
-pip install matplotlib
-pip install scipy
-pip install scikit-learn
-pip install tensorflow
-pip install torch
-pip install torch-geometric
+# Step 2.: Install other dependencies
+!pip install numpy
+!pip install pandas
+!pip install matplotlib
+!pip install scipy
+!pip install scikit-learn
+!pip install tensorflow
+!pip install torch-geometric
+
+!git clone https://github.com/aap81/RQPool.git
+%cd RQPool
+
+!cd datasets && ls
+
+!python split_dataset.py
+
+!git pull origin main
+
+!python main.py --data SW-620 --intergraph attention
