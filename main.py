@@ -32,7 +32,7 @@ args = parser.parse_args()
 
 #checking all hyper parameters with intergraph max and mean with integraph 0 (disabled)
 if args.alltests == 2:
-    datasets = [TESTING_SETS[args.datagroup]]
+    datasets = TESTING_SETS
     index = 0
     total_tests = len(INTERGRAPHS) * len(datasets)
     for dataset in datasets:

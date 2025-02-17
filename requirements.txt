@@ -16,4 +16,4 @@
 
 !git pull origin main
 
-!python main.py --data SW-620 --intergraph attention
+!python main.py --data SW-620 --intergraph attentiong
