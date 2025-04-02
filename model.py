@@ -241,6 +241,27 @@ class Graph2VecSet2Set(torch.nn.Module):
         graph_embedding = self.set2set(x, batch)
         return graph_embedding
 
+# class Graph2VecSortPooling(torch.nn.Module):
+#     def __init__(self, in_channels, hidden_channels, out_channels, k):
+#         super(Graph2VecSortPooling, self).__init__()
+#         self.conv1 = GCNConv(in_channels, hidden_channels)
+#         self.conv2 = GCNConv(hidden_channels, out_channels)
+#         self.sort_pool = SortAggregation(k)
+
+#     def forward(self, x, edge_index, batch):
+#         if x is None:
+#             # Create dummy features (all ones or identity) if x is None
+#             num_nodes = edge_index.max().item() + 1
+#             x = torch.ones((num_nodes, 1), device=edge_index.device)
+#         # Node-level GNN encoding
+#         x = self.conv1(x, edge_index)
+#         x = F.relu(x)
+#         x = self.conv2(x, edge_index)
+
+#         # SortPooling
+#         graph_embedding = self.sort_pool(x, batch)
+#         return graph_embedding
+
 class Graph2VecSortPooling(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, k):
         super(Graph2VecSortPooling, self).__init__()
@@ -250,15 +271,17 @@ class Graph2VecSortPooling(torch.nn.Module):
 
     def forward(self, x, edge_index, batch):
         if x is None:
-            # Create dummy features (all ones or identity) if x is None
             num_nodes = edge_index.max().item() + 1
-            x = torch.ones((num_nodes, 1), device=edge_index.device)
-        # Node-level GNN encoding
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
-        x = self.conv2(x, edge_index)
+            x = torch.ones((num_nodes, 1), device=edge_index.device).float()
+        else:
+            x = x.float()
 
-        # SortPooling
+        edge_weight = torch.ones(edge_index.size(1), device=edge_index.device).float()
+
+        x = self.conv1(x, edge_index, edge_weight=edge_weight)
+        x = F.relu(x)
+        x = self.conv2(x, edge_index, edge_weight=edge_weight)
+
         graph_embedding = self.sort_pool(x, batch)
         return graph_embedding
 

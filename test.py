@@ -43,7 +43,10 @@ def execute(args):
         utils.log_print("\n[NEW TEST]  - Model info:", enable_print, output_file)
         utils.log_print(json.dumps(args.__dict__, indent='\t'), enable_print, output_file)
 
-        graphs, adjs, features, graphlabels, train_index, val_index, test_index = utils.load_dataset(data)
+        if 'ogbg' in data:
+            graphs, adjs, features, graphlabels, train_index, val_index, test_index = utils.load_ogb_dataset(data)
+        else:
+            graphs, adjs, features, graphlabels, train_index, val_index, test_index = utils.load_dataset(data)
         # adjs, features, graphlabels, train_index, val_index, test_index = utils.load_data(data)
         featuredim = features[0].shape[1]
 

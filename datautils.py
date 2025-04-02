@@ -9,6 +9,9 @@ import shutil
 from torch_geometric.datasets import TUDataset
 from name import *
 import pdb
+from ogb.graphproppred import PygGraphPropPredDataset
+from torch_geometric.utils import to_scipy_sparse_matrix
+
 
 # fixes the pattern for randomness. 
 # when you set this you will always generate the same random numbers
@@ -139,3 +142,56 @@ def split_graph_dataset(graphs, datasets_path, dataset, train_ratio, test_ratio)
     np.savetxt(val_path, val_index, fmt='%d')
     np.savetxt(test_path, test_index, fmt='%d')
     np.savetxt(os.path.join(datasets_path, dataset, "raw", dataset + NEWLABEL), graphlabels, fmt='%d')
+
+def download_and_process_ogb_dataset(dataset_name='ogbg_molhiv'):
+    datasets_path = f"{get_repo_root()}/datasets"
+    dataset = PygGraphPropPredDataset(name=dataset_name.replace('_', '-'), root=datasets_path)
+    # Corrected label extraction
+    labels = dataset.data.y.squeeze().numpy()
+
+    if 'molpcba' in dataset_name:
+        task_idx = 0
+        task_labels = labels[:, task_idx]
+
+        # Remove graphs with NaN labels for this specific task
+        valid_indices = ~np.isnan(task_labels)
+        task_labels = task_labels[valid_indices].astype(int)
+        labels = task_labels
+
+    anomalous_class = 1
+    normal_class = 0
+
+    anomalous_indices = np.where(labels == anomalous_class)[0].tolist()
+    normal_indices = np.where(labels == normal_class)[0].tolist()
+
+    print(f"Normal graphs: {len(normal_indices)}, Anomalous graphs: {len(anomalous_indices)}")
+
+    np.random.shuffle(anomalous_indices)
+    np.random.shuffle(normal_indices)
+
+    def split_indices(indices):
+        total = len(indices)
+        train_end = int(0.7 * total)
+        val_end = int(0.85 * total)
+        return indices[:train_end], indices[train_end:val_end], indices[val_end:]
+
+    train_normal, val_normal, test_normal = split_indices(normal_indices)
+    train_anomalous, val_anomalous, test_anomalous = split_indices(anomalous_indices)
+
+    train_idx = np.array(train_normal + train_anomalous)
+    val_idx = np.array(val_normal + val_anomalous)
+    test_idx = np.array(test_normal + test_anomalous)
+
+    np.random.shuffle(train_idx)
+    np.random.shuffle(val_idx)
+    np.random.shuffle(test_idx)
+
+    raw_dir = os.path.join(datasets_path, dataset_name, "raw")
+    os.makedirs(raw_dir, exist_ok=True)
+
+    np.savetxt(os.path.join(raw_dir, f'{dataset_name}_train.txt'), train_idx, fmt='%d')
+    np.savetxt(os.path.join(raw_dir, f'{dataset_name}_val.txt'), val_idx, fmt='%d')
+    np.savetxt(os.path.join(raw_dir, f'{dataset_name}_test.txt'), test_idx, fmt='%d')
+    np.savetxt(os.path.join(raw_dir, f'{dataset_name}_labels.txt'), labels, fmt='%d')
+
+    return dataset, train_idx, val_idx, test_idx, labels

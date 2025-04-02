@@ -15,6 +15,7 @@ import pdb
 from name import *
 import batchdata
 import logging
+from datautils import download_and_process_ogb_dataset
 
 
 def set_seed(seed):
@@ -117,6 +118,29 @@ def get_repo_root():
             raise FileNotFoundError("Could not find the root directory of the repository")
         current_dir = parent_dir
     return current_dir
+
+def load_ogb_dataset(dataset_name="ogbg_molhiv"):
+    datasets_path = f"{get_repo_root()}/datasets"
+    dataset, train_idx, val_idx, test_idx, labels = download_and_process_ogb_dataset(dataset_name)
+
+    graphs = [dataset[i] for i in range(len(dataset))]
+    adjs = []
+    features = []
+
+    for graph in graphs:
+        edge_index = graph.edge_index
+        num_nodes = graph.num_nodes
+        adj = to_scipy_sparse_matrix(edge_index, num_nodes=num_nodes).tocoo()
+
+        if graph.x is not None:
+            features_matrix = graph.x.numpy()
+        else:
+            features_matrix = np.eye(num_nodes, 1)
+
+        adjs.append(adj)
+        features.append(features_matrix)
+
+    return graphs, adjs, features, labels, train_idx, val_idx, test_idx
 
 def load_dataset(dataset):
     # print(f"Loading dataset: {dataset}")
