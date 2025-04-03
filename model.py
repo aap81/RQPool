@@ -69,7 +69,7 @@ class RQGNN(nn.Module):
             scores[node_belong] = torch.unsqueeze(torch.mv(h[node_belong], tmpscores[i]), 1)
 
 
-        temp = torch.mul(data.graphpool_list.to_dense().T, scores).T
+        temp = torch.sparse.mm(data.graphpool_list, scores)
 
         h = torch.mm(temp, h)
         #h = torch.spmm(data.graphpool_list, h)
@@ -173,7 +173,7 @@ class RQGNNv2(nn.Module):
             # torch.unsqueeze(..., 1) adds an additional dimension to the tensor to make it compatible for further processing.
             scores[node_belong] = torch.unsqueeze(torch.mv(h[node_belong], tmpscores[i]), 1)
 
-        temp = torch.mul(data.graphpool_list.to_dense().T, scores).T
+        temp = torch.sparse.mm(data.graphpool_list, scores)
 
         h = torch.mm(temp, h)
         #h = torch.spmm(data.graphpool_list, h)

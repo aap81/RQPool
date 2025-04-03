@@ -9,7 +9,7 @@ import shutil
 from torch_geometric.datasets import TUDataset
 from name import *
 import pdb
-from ogb.graphproppred import PygGraphPropPredDataset
+from ogb.graphproppred import PygGraphPropPredDataset # https://ogb.stanford.edu/docs/graphprop/#ogbg-molhiv
 from torch_geometric.utils import to_scipy_sparse_matrix
 
 
@@ -150,7 +150,10 @@ def download_and_process_ogb_dataset(dataset_name='ogbg_molhiv'):
     labels = dataset.data.y.squeeze().numpy()
 
     if 'molpcba' in dataset_name:
-        task_idx = 0
+        # for i in range(labels.shape[1]):
+        #     valid = labels[:, i][~np.isnan(labels[:, i])]
+        #     print(f"Task {i}: {np.mean(valid)}, positive samples: {np.sum(valid)}")
+        task_idx = 93
         task_labels = labels[:, task_idx]
 
         # Remove graphs with NaN labels for this specific task

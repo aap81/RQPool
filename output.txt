@@ -1,0 +1,26 @@
+2025-04-03 07:27:38,322 - INFO - 
+[NEW TEST]  - Model info:
+2025-04-03 07:27:38,328 - INFO - {
+	"data": "ogbg_molpcba",
+	"lr": 0.001,
+	"batchsize": 256,
+	"nepoch": 100,
+	"hdim": 64,
+	"width": 4,
+	"depth": 6,
+	"dropout": 0.4,
+	"normalize": 1,
+	"beta": 0.999,
+	"gamma": 1.5,
+	"decay": 0,
+	"seed": 10,
+	"patience": 50,
+	"intergraph": "none",
+	"alltests": 0,
+	"datagroup": 0,
+	"logfile": "output.txt",
+	"metricsfile": "metrics-log.txt",
+	"completedindex": -1,
+	"endindex": 999999999,
+	"enableprint": 1
+}
