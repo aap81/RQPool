@@ -27,6 +27,7 @@ parser.add_argument('--metricsfile', default='metrics-log.txt', help="set output
 parser.add_argument('--completedindex', type=int, default=-1, help="completed_index")
 parser.add_argument('--endindex', type=int, default=999999999, help="end_index")
 parser.add_argument('--enableprint', type=int, default=0, help="enables print statements")
+parser.add_argument('--sortk', type=int, default=30, help="k parameter for sort pooling")
 
 args = parser.parse_args()
 

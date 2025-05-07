@@ -35,6 +35,7 @@ def execute(args):
     output_file = args.logfile
     metrics_file = args.metricsfile
     enable_print = args.enableprint
+    sortk = args.sortk
 
     try:
         nclass = 2
@@ -86,7 +87,7 @@ def execute(args):
         if intergraph == 'none':
             gad = model.RQGNN(featuredim, hdim, nclass, width, depth, dropout, normalize)
         else:
-            gad = model.EnhancedRQGNN(featuredim, hdim, nclass, width, depth, dropout, normalize, embedding_dim=128, inter_graph_pooling=intergraph)
+            gad = model.EnhancedRQGNN(featuredim, hdim, nclass, width, depth, dropout, normalize, embedding_dim=128, inter_graph_pooling=intergraph, sortk=sortk)
         optimizer = optim.Adam(gad.parameters(), lr=lr, weight_decay=decay)
 
         bestauc = 0

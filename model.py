@@ -69,8 +69,7 @@ class RQGNN(nn.Module):
             scores[node_belong] = torch.unsqueeze(torch.mv(h[node_belong], tmpscores[i]), 1)
 
 
-        temp = torch.sparse.mm(data.graphpool_list, scores)
-
+        temp = torch.mul(data.graphpool_list.to_dense().T, scores).T
         h = torch.mm(temp, h)
         #h = torch.spmm(data.graphpool_list, h)
 
@@ -173,7 +172,7 @@ class RQGNNv2(nn.Module):
             # torch.unsqueeze(..., 1) adds an additional dimension to the tensor to make it compatible for further processing.
             scores[node_belong] = torch.unsqueeze(torch.mv(h[node_belong], tmpscores[i]), 1)
 
-        temp = torch.sparse.mm(data.graphpool_list, scores)
+        temp = torch.mul(data.graphpool_list.to_dense().T, scores).T
 
         h = torch.mm(temp, h)
         #h = torch.spmm(data.graphpool_list, h)
@@ -240,27 +239,6 @@ class Graph2VecSet2Set(torch.nn.Module):
         # Set2Set pooling
         graph_embedding = self.set2set(x, batch)
         return graph_embedding
-
-# class Graph2VecSortPooling(torch.nn.Module):
-#     def __init__(self, in_channels, hidden_channels, out_channels, k):
-#         super(Graph2VecSortPooling, self).__init__()
-#         self.conv1 = GCNConv(in_channels, hidden_channels)
-#         self.conv2 = GCNConv(hidden_channels, out_channels)
-#         self.sort_pool = SortAggregation(k)
-
-#     def forward(self, x, edge_index, batch):
-#         if x is None:
-#             # Create dummy features (all ones or identity) if x is None
-#             num_nodes = edge_index.max().item() + 1
-#             x = torch.ones((num_nodes, 1), device=edge_index.device)
-#         # Node-level GNN encoding
-#         x = self.conv1(x, edge_index)
-#         x = F.relu(x)
-#         x = self.conv2(x, edge_index)
-
-#         # SortPooling
-#         graph_embedding = self.sort_pool(x, batch)
-#         return graph_embedding
 
 class Graph2VecSortPooling(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, k):
@@ -403,16 +381,15 @@ class TopKPoolModel(torch.nn.Module):
         return self.lin(x)
 
 class EnhancedRQGNN(nn.Module):
-    def __init__(self, feature_dim, hidden_dim, n_class, gnn_width, gnn_depth, dropout, normalize, embedding_dim=128, inter_graph_pooling="mean"):
+    def __init__(self, feature_dim, hidden_dim, n_class, gnn_width, gnn_depth, dropout, normalize, embedding_dim=128, inter_graph_pooling="mean", sortk=30):
         super(EnhancedRQGNN, self).__init__()
         self.intra_analyzer = RQGNNv2(feature_dim, hidden_dim, n_class, gnn_width, gnn_depth, dropout, normalize)
         if inter_graph_pooling == "set2set":
             self.inter_analyzer = Graph2VecSet2Set(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim)
             self.projection = nn.Linear(2 * embedding_dim, n_class)
         elif inter_graph_pooling == "sort":
-            k = 30
-            self.inter_analyzer = Graph2VecSortPooling(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim, k=k)
-            self.projection = nn.Linear(k * embedding_dim, n_class)
+            self.inter_analyzer = Graph2VecSortPooling(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim, k=sortk)
+            self.projection = nn.Linear(sortk * embedding_dim, n_class)
         elif inter_graph_pooling == "sage":
             self.inter_analyzer = Graph2VecGraphSAGE(in_channels=feature_dim, hidden_channels=gnn_width, out_channels=embedding_dim)
             self.projection = nn.Linear(embedding_dim, n_class)

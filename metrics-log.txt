@@ -1,6 +1,0 @@
-Dataset: ogbg_molhiv, Intergraph: sort, avg_training_time: 40.58560645103454, testing_vals: {'by_auc': {'idx': 72, 'auc': 0.7878829633976131, 'f1': 0.7076561519639382, 'accuracy': 0.9692058346839546, 'precision': 0.7957147758898957, 'recall': 0.6621190105906405}, 'by_f1': {'idx': 84, 'auc': 0.7960041833068716, 'f1': 0.7245159853270511, 'accuracy': 0.9711507293354943, 'precision': 0.8232219150540336, 'recall': 0.6742276867721886}} 
-
-Dataset: ogbg_molhiv, Intergraph: none, avg_training_time: 36.137462327480314, testing_vals: {'by_auc': {'idx': 90, 'auc': 0.7355204091032598, 'f1': 0.6555331158119457, 'accuracy': 0.9674230145867099, 'precision': 0.7849828531136822, 'recall': 0.6101315140644727}, 'by_f1': {'idx': 85, 'auc': 0.7323326116019417, 'f1': 0.6545391428987357, 'accuracy': 0.9683954619124797, 'precision': 0.8124498924966291, 'recall': 0.6061951492528648}} 
-
-Dataset: ogbg_molpcba, Intergraph: sort, avg_training_time: 157.59444960841427, testing_vals: {'by_auc': {'idx': 37, 'auc': 0.4960599152707681, 'f1': 0.4739306559804861, 'accuracy': 0.9008900848685573, 'precision': 0.45044504243427863, 'recall': 0.5}, 'by_f1': {'idx': 2, 'auc': 0.506491497957399, 'f1': 0.4739191985190025, 'accuracy': 0.9008486855723453, 'precision': 0.45044299080897576, 'recall': 0.49997702311474657}} 
-
