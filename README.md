@@ -1,40 +1,31 @@
 # RQPool
 
-## Overview
-RQPool is a framework designed for Graph-level Anomaly detection on graph datasets and running experiments using various graph pooling techniques. It supports both TUDataset and OGB datasets.
+## 1. Install Packages
 
-## Installation
-
-1. First, install the required dependencies by running the following command:
+Run the following command to install the required packages:
 
 ```bash
-pip install numpy
-pip install pandas
-pip install matplotlib
-pip install scipy
-pip install scikit-learn
-pip install tensorflow
-pip install torch
-pip install torch-geometric
-```bash
+pip install numpy pandas matplotlib scipy scikit-learn tensorflow torch torch-geometric
+```
 
-##  Dataset Setup
-2. TUDataset only
 
-a. To download and process any TUDataset, follow these steps:
-b.Visit the TUDataset page (https://chrsmrrs.github.io/datasets/docs/datasets/) to explore the available datasets.
-c. Check the name.py file for the dataset you want to use and locate the TESTING_SETS.
+## 2. Download Datasets
 
-Run the following command to split the dataset:
+### a. TUDataset
+
+1. Open the file `split_dataset.py` and specify which TUDatasets you need.
+2. Run the script with:
 ```bash
 python split_dataset.py
-```bash
-Note: If you're planning to test with an OGB dataset (e.g., ogbg_molhiv), you can skip this step.
+```
 
-### Running RQPool
-3. To run RQPool on a dataset, use the following command:
+### b. OGBG Dataset
+
+- OGBG datasets are downloaded on demand. If your chosen dataset name starts with `ogbg`, you do not need to perform any additional download steps.
+
+## 3. Run RQPool
+
+Pass any command-line arguments supported by `main.py` using the format `--<option> <value>`. For example, to run RQPool on the `ogbg_molhiv` dataset using sort-based inter-graph pooling for 100 epochs with printing enabled, execute:
 ```bash
 python main.py --data ogbg_molhiv --intergraph sort --nepoch 100 --enableprint 1
-```bash
-
-You can check all available parameters in main.py
+```
